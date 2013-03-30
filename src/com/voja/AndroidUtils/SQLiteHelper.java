@@ -1,4 +1,4 @@
-package com.voja.AndroidFramework;
+package com.voja.AndroidUtils;
 
 import java.util.ArrayList;
 

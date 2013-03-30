@@ -1,4 +1,4 @@
-package com.voja.AndroidFramework;
+package com.voja.AndroidUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
