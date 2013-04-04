@@ -42,6 +42,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		db = getWritableDatabase();
 	}
 	
+	public int execute(String sql) {
+		int affected = 0;
+		
+		db.execSQL(sql);
+		Cursor c = query("SELECT changes()");
+		if (c.moveToFirst()) {
+			affected = c.getInt(0);
+		} else {
+			android.util.Log.e("voja", "empty cursor");
+		}
+		
+		return affected;
+	}
+	
 	public Cursor query(String sql) {
 		return db.rawQuery(sql, null);
 	}

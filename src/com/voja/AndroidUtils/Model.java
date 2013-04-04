@@ -54,6 +54,10 @@ public class Model {
 		return connection;
 	}
 	
+	public int execute(String sql) {
+		return getConnection().execute(sql);
+	}
+	
 	public Context getContext() {
 		return this.context;
 	}
