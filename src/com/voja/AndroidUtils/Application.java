@@ -74,6 +74,9 @@ public class Application extends android.app.Application {
 		Click negClick = null;
 		alert(message, Toast.LENGTH_LONG, -1, DEFAULT_MESSAGE_TITLE, posClick, negClick);
 	}
+	public static void alert(String message, Click onClick) {
+		alert(message, Toast.LENGTH_LONG, -1, DEFAULT_MESSAGE_TITLE, onClick, null);
+	}
 	public static void alert(
 			String 	message, 
 			int 	duration, 
