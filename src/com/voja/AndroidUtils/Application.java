@@ -69,33 +69,14 @@ public class Application extends android.app.Application {
 		return appContext;
 	}
 	
-	public static void alert(String message) {
-		Click posClick = new Click("OK", new CommandWrapper(Command.NOOP));
-		Click negClick = null;
-		alert(message, Toast.LENGTH_LONG, -1, DEFAULT_MESSAGE_TITLE, posClick, negClick);
-	}
-	public static void alert(String message, Click onClick) {
-		alert(message, Toast.LENGTH_LONG, -1, DEFAULT_MESSAGE_TITLE, onClick, null);
-	}
-	public static void alert(
-			String 	message, 
-			int 	duration, 
-			int 	icon, 
-			String title,
-			Click clickPositive) {
+	public static void dialog(
+		String 	message,
+		int		icon,
+		String	title,
+		Click	clickPositive,
+		Click	clickNegative
+		) {
 		
-		alert(message, duration, icon, title, clickPositive, null);
-	}
-	
-	public static void alert(
-			String 	message, 
-			int 	duration, 
-			int 	icon, 
-			String title,
-			Click clickPositive,
-			Click clickNegative) {
-		
-		//Toast.makeText(getContext(), message, duration).show();
 		Context context = getContext();
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -112,7 +93,45 @@ public class Application extends android.app.Application {
 			builder.setNegativeButton(clickNegative.getText(), clickNegative.getEvent());
 		}
 		
-		AlertDialog alert = builder.create();
-		alert.show();
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+	
+	/**
+	 * ALERT    ==============================================
+	 **/
+	public static void alert(String message) {
+		Click posClick = new Click("OK", new CommandWrapper(Command.NOOP));
+		Click negClick = null;
+		dialog(message, android.R.drawable.ic_dialog_alert, DEFAULT_MESSAGE_TITLE, posClick, negClick);
+	}
+	public static void alert(String message, Click onClick) {
+		dialog(message, android.R.drawable.ic_dialog_alert, DEFAULT_MESSAGE_TITLE, onClick, null);
+	}
+	public static void alert(
+			String 	message,
+			int 	icon,
+			String 	title,
+			Click 	clickPositive,
+			Click	clickNegative
+			) {
+		
+		dialog(message, icon, title, clickPositive, clickNegative);
+	}
+	
+	/**
+	 * CONFIRM    ==============================================
+	 **/
+	public static void confirm(String message, Click yesClick) {
+		dialog(message, -1, DEFAULT_MESSAGE_TITLE, yesClick, null);
+	}
+	public static void confirm(String message, Click yesClick, Click noClick) {
+		dialog(message, -1, DEFAULT_MESSAGE_TITLE, yesClick, noClick);
+	}
+	public static void confirm(String message, Click yesClick, Click noClick, int icon) {
+		dialog(message, icon, DEFAULT_MESSAGE_TITLE, yesClick, noClick);	
+	}
+	public static void confirm(String message, Click yesClick, Click noClick, int icon, String title) {
+		dialog(message, icon, title, yesClick, noClick);
 	}
 }
