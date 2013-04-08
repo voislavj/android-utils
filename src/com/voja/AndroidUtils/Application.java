@@ -3,7 +3,6 @@ package com.voja.AndroidUtils;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.widget.Toast;
 
 public class Application extends android.app.Application {
 	
@@ -103,10 +102,10 @@ public class Application extends android.app.Application {
 	public static void alert(String message) {
 		Click posClick = new Click("OK", new CommandWrapper(Command.NOOP));
 		Click negClick = null;
-		dialog(message, android.R.drawable.ic_dialog_alert, DEFAULT_MESSAGE_TITLE, posClick, negClick);
+		dialog(message, android.R.drawable.ic_dialog_info, DEFAULT_MESSAGE_TITLE, posClick, negClick);
 	}
 	public static void alert(String message, Click onClick) {
-		dialog(message, android.R.drawable.ic_dialog_alert, DEFAULT_MESSAGE_TITLE, onClick, null);
+		dialog(message, android.R.drawable.ic_dialog_info, DEFAULT_MESSAGE_TITLE, onClick, null);
 	}
 	public static void alert(
 			String 	message,
@@ -123,7 +122,8 @@ public class Application extends android.app.Application {
 	 * CONFIRM    ==============================================
 	 **/
 	public static void confirm(String message, Click yesClick) {
-		dialog(message, -1, DEFAULT_MESSAGE_TITLE, yesClick, null);
+		Click noClick = new Click("Cancel", new CommandWrapper(Command.NOOP));
+		dialog(message, -1, DEFAULT_MESSAGE_TITLE, yesClick, noClick);
 	}
 	public static void confirm(String message, Click yesClick, Click noClick) {
 		dialog(message, -1, DEFAULT_MESSAGE_TITLE, yesClick, noClick);
