@@ -1,14 +1,19 @@
 package com.voja.AndroidUtils;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.View;
+import android.widget.EditText;
 
 public class Application extends android.app.Application {
 	
 	public static String DEFAULT_MESSAGE_TITLE = "Message";
 
 	private static Context appContext;
+	
+	public static View dialogView;
 	
 	public interface Command {
 		public void execute();
@@ -68,17 +73,16 @@ public class Application extends android.app.Application {
 		return appContext;
 	}
 	
-	public static void dialog(
+	public static AlertDialog buildDialog(
 		String 	message,
 		int		icon,
 		String	title,
 		Click	clickPositive,
-		Click	clickNegative
-		) {
+		Click	clickNegative ) {
 		
 		Context context = getContext();
 		
-		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		Builder builder = new Builder(context);
 		builder.setCancelable(true);
 		if (icon > -1) {
 			builder.setIcon(icon);
@@ -93,6 +97,18 @@ public class Application extends android.app.Application {
 		}
 		
 		AlertDialog dialog = builder.create();
+		return dialog;
+	}
+	
+	public static void dialog(
+		String 	message,
+		int		icon,
+		String	title,
+		Click	clickPositive,
+		Click	clickNegative
+		) {
+		
+		AlertDialog dialog = buildDialog(message, icon, title, clickPositive, clickNegative);
 		dialog.show();
 	}
 	
@@ -133,5 +149,23 @@ public class Application extends android.app.Application {
 	}
 	public static void confirm(String message, Click yesClick, Click noClick, int icon, String title) {
 		dialog(message, icon, title, yesClick, noClick);
+	}
+	
+	/**
+	 * PROMPT    ==============================================
+	 **/
+	public static void prompt(String message, String value, Click clickOK) {
+		Click clickCANCEL = new Click("Cancel", new CommandWrapper(Command.NOOP));
+		AlertDialog dialog = buildDialog(message, -1, DEFAULT_MESSAGE_TITLE, clickOK, clickCANCEL);
+		dialog.setTitle(message);
+		dialog.setMessage("");
+		
+		EditText edit = new EditText(getContext());
+		edit.setText(value);
+		edit.selectAll();
+		dialogView = (View)edit;
+		
+		dialog.setView(edit);
+		dialog.show();
 	}
 }
