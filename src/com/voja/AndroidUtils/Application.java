@@ -157,8 +157,6 @@ public class Application extends android.app.Application {
 	public static void prompt(String message, String value, Click clickOK) {
 		Click clickCANCEL = new Click("Cancel", new CommandWrapper(Command.NOOP));
 		AlertDialog dialog = buildDialog(message, -1, DEFAULT_MESSAGE_TITLE, clickOK, clickCANCEL);
-		dialog.setTitle(message);
-		dialog.setMessage("");
 		
 		EditText edit = new EditText(getContext());
 		edit.setText(value);
