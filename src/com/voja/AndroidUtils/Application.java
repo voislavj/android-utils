@@ -1,5 +1,7 @@
 package com.voja.AndroidUtils;
 
+import com.voja.AndroidUtils.ColorPickerDialog.OnColorChangedListener;
+
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -164,6 +166,14 @@ public class Application extends android.app.Application {
 		dialogView = (View)edit;
 		
 		dialog.setView(edit);
+		dialog.show();
+	}
+	
+	/**
+	 * ColorPicker    ==============================================
+	 **/
+	public static void colorPicker(int color, OnColorChangedListener listener) {
+		ColorPickerDialog dialog = new ColorPickerDialog(getContext(), listener, color);
 		dialog.show();
 	}
 }
