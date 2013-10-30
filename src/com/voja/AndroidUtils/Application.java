@@ -17,11 +17,17 @@ public class Application extends android.app.Application {
 	
 	public static View dialogView;
 	
+	@Override
+	public void onCreate() {
+	    super.onCreate();
+	}
+	
 	public interface Command {
 		public void execute();
 		public static final Command NOOP = new Command(){public void execute(){}};
 	}
-	public static class CommandWrapper implements DialogInterface.OnClickListener {
+	
+    public static class CommandWrapper implements DialogInterface.OnClickListener {
 		private Command command;
 		
 		public CommandWrapper() {
@@ -64,11 +70,12 @@ public class Application extends android.app.Application {
 		}
 	};
 	
-	public static void setContext(Context context) {
+	public static void    setContext(Context context) {
 		appContext = context;
 	}
-	private static Context getContext() throws RuntimeException {
-		if (appContext.equals(null)) {
+	
+	public static Context getContext() throws RuntimeException {
+		if (appContext == null) {
 			throw new RuntimeException("Application Context is not set");
 		}
 		
