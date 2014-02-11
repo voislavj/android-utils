@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 public class Model {
 	
@@ -52,6 +53,10 @@ public class Model {
 	
 	public SQLiteHelper getConnection() {
 		return connection;
+	}
+	
+	public SQLiteDatabase getDatabase() {
+		return connection.db;
 	}
 	
 	public int execute(String sql) {
