@@ -7,6 +7,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
+import android.view.WindowManager.BadTokenException;
 import android.widget.EditText;
 
 public class Application extends android.app.Application {
@@ -118,7 +119,10 @@ public class Application extends android.app.Application {
 		) {
 		
 		AlertDialog dialog = buildDialog(message, icon, title, clickPositive, clickNegative);
-		dialog.show();
+		try {
+			dialog.show();
+		} catch (BadTokenException bte) {
+		}
 	}
 	
 	/**
