@@ -10,16 +10,13 @@ import android.database.sqlite.SQLiteStatement;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 	
-	public static final String DB_NAME    = "schedule";
-	public static final int    DB_VERSION = 1;
-	
 	SQLiteDatabase db;
 	Context context;
 	
 	ArrayList<String> sqls;
 
-	public SQLiteHelper(Context c, ArrayList<String> createSQLs) {
-		super(c, DB_NAME, null, DB_VERSION);
+	public SQLiteHelper(String dbName, int dbVersion, Context c, ArrayList<String> createSQLs) {
+		super(c, dbName, null, dbVersion);
 		
 		context = c;
 		sqls = createSQLs;
@@ -30,6 +27,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase database) {
 		for (int i=0; i<sqls.size(); i++) {
+			android.util.Log.v("sql", sqls.get(i));
 			database.execSQL(sqls.get(i));
 		}
 	}

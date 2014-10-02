@@ -9,6 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
@@ -23,7 +25,15 @@ public class Model {
 		context = c;
 		
 		sqls = loadStructure();
-		connection = new SQLiteHelper(context, sqls);
+		
+		ApplicationInfo appInfo = context.getApplicationInfo();
+		int dbVersion;
+        try {
+	        dbVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+        } catch (NameNotFoundException e) {
+	        dbVersion = 1;
+        }
+		connection = new SQLiteHelper(appInfo.name, dbVersion, context, sqls);
 		connection.open();
 	}
 	
