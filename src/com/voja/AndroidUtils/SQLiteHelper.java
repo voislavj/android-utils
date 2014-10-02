@@ -27,7 +27,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase database) {
 		for (int i=0; i<sqls.size(); i++) {
-			android.util.Log.v("sql", sqls.get(i));
 			database.execSQL(sqls.get(i));
 		}
 	}

@@ -33,7 +33,8 @@ public class Model {
         } catch (NameNotFoundException e) {
 	        dbVersion = 1;
         }
-		connection = new SQLiteHelper(appInfo.name, dbVersion, context, sqls);
+        String dbName = appInfo.packageName.replaceAll("/[^a-z0-9]/i", "_");
+		connection = new SQLiteHelper(dbName, dbVersion, context, sqls);
 		connection.open();
 	}
 	
@@ -49,7 +50,7 @@ public class Model {
 				sql += line;
 			}
 			
-			String rgx = "create.*?;|(update.*?;)|(insert.*?;)";
+			String rgx = "create.*?;|(update.*?;)|(insert.*?;)|(alter.*?;)";
 			Pattern pattern = Pattern.compile(rgx, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 			Matcher matcher = pattern.matcher(sql);
 			
