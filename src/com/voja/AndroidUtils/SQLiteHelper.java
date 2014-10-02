@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 	
@@ -40,6 +41,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	
 	public void open() {
 		db = getWritableDatabase();
+	}
+	
+	public SQLiteStatement prepareStatement(String sql) {
+		if (db == null) {
+			open();
+		}
+		
+		return db.compileStatement(sql);
 	}
 	
 	public int execute(String sql) {

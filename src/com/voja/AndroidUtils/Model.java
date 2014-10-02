@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 public class Model {
 	
@@ -57,6 +58,10 @@ public class Model {
 	
 	public SQLiteDatabase getDatabase() {
 		return connection.db;
+	}
+	
+	public SQLiteStatement prepare(String sql) {
+		return connection.prepareStatement(sql);
 	}
 	
 	public int execute(String sql) {
