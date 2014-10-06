@@ -19,12 +19,13 @@ public class Model {
 	SQLiteHelper connection;
 	Context context;
 	
-	ArrayList<String> sqls = new ArrayList<String>();
+	ArrayList<String> createSQLs  = new ArrayList<String>();
+	ArrayList<String> upgradeSQLs = new ArrayList<String>();
 	
 	public Model(Context c) {
 		context = c;
 		
-		sqls = loadStructure();
+		loadStructure();
 		
 		ApplicationInfo appInfo = context.getApplicationInfo();
 		int dbVersion;
@@ -34,12 +35,11 @@ public class Model {
 	        dbVersion = 1;
         }
         String dbName = appInfo.packageName.replaceAll("/[^a-z0-9]/i", "_");
-		connection = new SQLiteHelper(dbName, dbVersion, context, sqls);
+		connection = new SQLiteHelper(dbName, dbVersion, context, createSQLs, upgradeSQLs);
 		connection.open();
 	}
 	
-	public ArrayList<String> loadStructure() {
-		ArrayList<String> sqls = new ArrayList<String>();
+	public void loadStructure() {
 		String sql 	 = "";
 		try {
 			InputStream in = context.getAssets().open("database.sql");
@@ -50,17 +50,24 @@ public class Model {
 				sql += line;
 			}
 			
-			String rgx = "create.*?;|(update.*?;)|(insert.*?;)|(alter.*?;)";
+			String rgx = "create.*?;|(update.*?;)|(insert.*?;)";
 			Pattern pattern = Pattern.compile(rgx, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 			Matcher matcher = pattern.matcher(sql);
-			
 			while (matcher.find()) {
-				sqls.add(matcher.group());
+				createSQLs.add(matcher.group());
 			}
+			
+			rgx = "alter.*?;";
+			pattern = Pattern.compile(rgx, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+			matcher = pattern.matcher(sql);
+			while (matcher.find()) {
+				upgradeSQLs.add(matcher.group());
+			}
+			
+			
 		} catch(IOException e) {
 			android.util.Log.e(context.getPackageName(), "Error loading database structure. " + e.getMessage());
 		}
-		return sqls;
 	}
 	
 	public SQLiteHelper getConnection() {
