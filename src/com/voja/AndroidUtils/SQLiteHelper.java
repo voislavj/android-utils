@@ -39,7 +39,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 			try {
 				database.execSQL(upgradeSQLs.get(i));
 			} catch (SQLiteException e) {
-				
+				android.util.Log.v("sql-error", upgradeSQLs.get(i));
+				android.util.Log.v("sql-error-message", e.getMessage());
 			}
 		}
 	}
