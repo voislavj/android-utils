@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
@@ -88,5 +89,9 @@ public class Model {
 	
 	public Context getContext() {
 		return this.context;
+	}
+	
+	public String escapeString(String s) {
+		return DatabaseUtils.sqlEscapeString(s);
 	}
 }
