@@ -37,7 +37,6 @@ public class Model {
         }
         String dbName = appInfo.packageName.replaceAll("/[^a-z0-9]/i", "_");
 		connection = new SQLiteHelper(dbName, dbVersion, context, createSQLs, upgradeSQLs);
-		connection.open();
 	}
 	
 	public void loadStructure() {

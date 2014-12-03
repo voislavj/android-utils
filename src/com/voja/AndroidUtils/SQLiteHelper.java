@@ -49,6 +49,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		db = getWritableDatabase();
 	}
 	
+	public void close() {
+		if (db != null) db.close();
+	}
+	
 	public SQLiteStatement prepareStatement(String sql) {
 		if (db == null) {
 			open();
