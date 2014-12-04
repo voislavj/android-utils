@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.michenux.android.db.utils.SqlParser;
+
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,56 +21,53 @@ import android.database.sqlite.SQLiteStatement;
 
 public class Model {
 	
-	SQLiteHelper connection;
-	Context context;
+	public SQLiteHelper connection;
+	public Context context;
 	
-	ArrayList<String> createSQLs  = new ArrayList<String>();
-	ArrayList<String> upgradeSQLs = new ArrayList<String>();
+	public ArrayList<String> createSQLs  = new ArrayList<String>();
+	public ArrayList<String> upgradeSQLs = new ArrayList<String>();
+	
+	public int dbVersion = 1;
 	
 	public Model(Context c) {
 		context = c;
 		
 		loadStructure();
 		
-		ApplicationInfo appInfo = context.getApplicationInfo();
-		int dbVersion;
-        try {
-	        dbVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
-        } catch (NameNotFoundException e) {
-	        dbVersion = 1;
-        }
-        String dbName = appInfo.packageName.replaceAll("/[^a-z0-9]/i", "_");
-		connection = new SQLiteHelper(dbName, dbVersion, context, createSQLs, upgradeSQLs);
+		for (String sql : createSQLs) {
+			android.util.Log.v("create", sql);
+		}
+		for (String sql : upgradeSQLs) {
+			android.util.Log.v("upgrade", sql);
+		}
+		
+		ApplicationInfo appInfo 	= context.getApplicationInfo();
+		PackageManager  manager  	= context.getPackageManager();
+		String 			packageName = context.getPackageName();
+		try {
+			PackageInfo 	packageInfo = manager.getPackageInfo(packageName, 0);
+			dbVersion = packageInfo.versionCode;
+			
+			String dbName = appInfo.packageName.replaceAll("/[^a-z0-9]/i", "_");
+			connection = new SQLiteHelper(dbName, dbVersion, context, createSQLs, upgradeSQLs);
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void loadStructure() {
-		String sql 	 = "";
 		try {
-			InputStream in = context.getAssets().open("database.sql");
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			
-			String line;
-			while((line = br.readLine()) != null) {
-				sql += line;
-			}
-			
-			String rgx = "create.*?;|(update.*?;)|(insert.*?;)";
-			Pattern pattern = Pattern.compile(rgx, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
-			Matcher matcher = pattern.matcher(sql);
-			while (matcher.find()) {
-				createSQLs.add(matcher.group());
-			}
-			
-			rgx = "alter.*?;";
-			pattern = Pattern.compile(rgx, Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
-			matcher = pattern.matcher(sql);
-			while (matcher.find()) {
-				upgradeSQLs.add(matcher.group());
-			}
-			
-			
+			loadSQL(createSQLs,  String.format("database.%d.create.sql", dbVersion));
+			loadSQL(upgradeSQLs, String.format("database.%d.upgrade.sql", dbVersion));
 		} catch(IOException e) {
 			android.util.Log.e(context.getPackageName(), "Error loading database structure. " + e.getMessage());
+		}
+	}
+	
+	private void loadSQL(ArrayList<String> list, String filename) throws IOException {
+		InputStream in = context.getAssets().open(filename);
+		for (String sql : SqlParser.parseSqlFile(in)) {
+			list.add(sql);
 		}
 	}
 	
