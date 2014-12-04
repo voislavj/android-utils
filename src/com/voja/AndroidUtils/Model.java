@@ -33,25 +33,14 @@ public class Model {
 	public Model(Context c) {
 		context = c;
 		
-		loadStructure();
-		
-		for (String sql : createSQLs) {
-			android.util.Log.v("create", sql);
-		}
-		for (String sql : upgradeSQLs) {
-			android.util.Log.v("upgrade", sql);
-		}
-		
 		ApplicationInfo appInfo 	= context.getApplicationInfo();
 		PackageManager  manager  	= context.getPackageManager();
 		String 			packageName = context.getPackageName();
 		try {
-			android.util.Log.v("package", packageName);
 			PackageInfo packageInfo = manager.getPackageInfo(packageName, 0);
-			android.util.Log.v("package-name", packageName);
-			android.util.Log.v("package-version-code", ""+packageInfo.versionCode);
-			android.util.Log.v("package-version-name", packageInfo.versionName);
 			dbVersion = packageInfo.versionCode;
+			
+			loadStructure();
 			
 			String dbName = appInfo.packageName.replaceAll("/[^a-z0-9]/i", "_");
 			connection = new SQLiteHelper(dbName, dbVersion, context, createSQLs, upgradeSQLs);
