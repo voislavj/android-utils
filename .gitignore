@@ -1,4 +1,2 @@
 bin/
-android-framework-api7.jar
-android-utils.jar
-
+*.jar
