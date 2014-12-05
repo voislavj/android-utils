@@ -34,7 +34,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		db = database;
 		try {
 			String filename = String.format("db/%d.create.sql", dbVersion);
-			android.util.Log.v("create-debug", filename);
 			execFile(filename);
 		} catch (IOException ioe) {
 			android.util.Log.e("db-create", ioe.getMessage(), ioe);
