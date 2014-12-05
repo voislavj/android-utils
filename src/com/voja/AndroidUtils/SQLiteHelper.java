@@ -1,47 +1,65 @@
 package com.voja.AndroidUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
+import org.michenux.android.db.utils.SqlParser;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
+	public SQLiteDatabase db;
+	public Context context;
+	public ArrayList<String> createSQLs, upgradeSQLs;
 	
-	SQLiteDatabase db;
-	Context context;
+	private AssetManager assManager;
+	private int dbVersion;
 	
-	ArrayList<String> createSQLs, upgradeSQLs;
-
-	public SQLiteHelper(String dbName, int dbVersion, Context c, ArrayList<String> createSQLs, ArrayList<String> upgradeSQLs) {
-		super(c, dbName, null, dbVersion);
+	public SQLiteHelper(String dbName, int dbVersion, Context context) {
+		super(context, dbName, null, dbVersion);
 		
-		context = c;
-		this.createSQLs = createSQLs;
-		this.upgradeSQLs = upgradeSQLs;
+		this.context    = context;
+		this.assManager = context.getAssets();
+		this.dbVersion  = dbVersion;
 		
 		open();
 	}
 	
 	@Override
 	public void onCreate(SQLiteDatabase database) {
-		for (int i=0; i<createSQLs.size(); i++) {
-			database.execSQL(createSQLs.get(i));
+		db = database;
+		try {
+			String filename = String.format("db/%d.create.sql", dbVersion);
+			android.util.Log.v("create-debug", filename);
+			execFile(filename);
+		} catch (IOException ioe) {
+			android.util.Log.e("db-create", ioe.getMessage(), ioe);
+		} catch (SQLException dbe) {
+			android.util.Log.e("db-create", dbe.getMessage(), dbe);
 		}
 	}
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-		for (int i=0; i<upgradeSQLs.size(); i++) {
-			try {
-				database.execSQL(upgradeSQLs.get(i));
-			} catch (SQLiteException e) {
-				android.util.Log.v("sql-error", upgradeSQLs.get(i));
-				android.util.Log.v("sql-error-message", e.getMessage());
+		db = database;
+		try {
+			int fileVersion=0;
+			for(String file : assManager.list("db")) {
+				if (file.endsWith(".upgrade.sql")) {
+					fileVersion = Integer.parseInt(file.replaceAll(".upgrade.sql$", ""));
+					if (fileVersion > oldVersion && fileVersion <= newVersion) {
+						execFile("db/"+file);
+					}
+				}
 			}
+		} catch(IOException ioe) {
+			android.util.Log.e("db-upgrade", ioe.getMessage(), ioe);
+		} catch (SQLException dbe) {
+			android.util.Log.e("db-create", dbe.getMessage(), dbe);
 		}
 	}
 	
@@ -80,5 +98,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	}
 	public Cursor query(String sql, String[] selArgs) {
 		return db.rawQuery(sql, selArgs);
+	}
+	
+	private void execFile(String filename) throws IOException, SQLException {
+		for(String sql : SqlParser.parseSqlFile(filename, assManager)) {
+			db.execSQL(sql);
+		}
 	}
 }
