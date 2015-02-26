@@ -172,6 +172,9 @@ public class Application extends android.app.Application {
 	}
 	public static void prompt(String message, String value, Click clickOK, String dialogTitle) {
 		Click clickCANCEL = new Click("Cancel", new CommandWrapper(Command.NOOP));
+		prompt(message, value, clickOK, clickCANCEL, dialogTitle);
+	}
+	public static void prompt(String message, String value, Click clickOK, Click clickCANCEL, String dialogTitle) {
 		AlertDialog dialog = buildDialog(message, -1, dialogTitle, clickOK, clickCANCEL);
 		
 		EditText edit = new EditText(getContext());
