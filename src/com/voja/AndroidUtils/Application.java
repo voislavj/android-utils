@@ -190,11 +190,11 @@ public class Application extends android.app.Application {
 	/**
 	 * TOAST
 	 */
-	public static void toast(String message) {
-		toast(message, Toast.LENGTH_LONG);
+	public static Toast toast(String message) {
+		return toast(message, Toast.LENGTH_LONG);
 	}
-	public static void toast(String message, int duration) {
-		Toast.makeText(getContext(), message, duration);
+	public static Toast toast(String message, int duration) {
+		return Toast.makeText(getContext(), message, duration);
 	}
 	
 	/**
