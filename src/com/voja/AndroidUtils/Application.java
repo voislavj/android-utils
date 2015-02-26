@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.view.WindowManager.BadTokenException;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class Application extends android.app.Application {
 	
@@ -184,6 +185,16 @@ public class Application extends android.app.Application {
 		
 		dialog.setView(edit);
 		dialog.show();
+	}
+	
+	/**
+	 * TOAST
+	 */
+	public static void toast(String message) {
+		toast(message, Toast.LENGTH_LONG);
+	}
+	public static void toast(String message, int duration) {
+		Toast.makeText(getContext(), message, duration);
 	}
 	
 	/**
